@@ -102,7 +102,15 @@ const RowActionComponent = ({
     };
 
     if (isSecurityFlyoutEnabled) {
-      openPanels({});
+      openPanels({
+        right: {
+          id: 'right',
+          params: {
+            id: '',
+            indexName,
+          },
+        },
+      });
     } else {
       dispatch(
         dataTableActions.toggleDetailPanel({
