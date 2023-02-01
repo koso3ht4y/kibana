@@ -8,6 +8,7 @@
 import type { EuiDataGridCellValueElementProps } from '@elastic/eui';
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import { useExpandableFlyoutContext } from '@kbn/expandable-flyout';
 import type {
   SetEventsDeleted,
   SetEventsLoading,
@@ -20,7 +21,6 @@ import type { TimelineItem, TimelineNonEcsData } from '../../../../../common/sea
 import type { ColumnHeaderOptions, OnRowSelected } from '../../../../../common/types/timeline';
 import { dataTableActions } from '../../../store/data_table';
 import { useIsExperimentalFeatureEnabled } from '../../../hooks/use_experimental_features';
-import { openSecurityFlyout } from '../../../store/flyout/reducers';
 
 type Props = EuiDataGridCellValueElementProps & {
   columnHeaders: ColumnHeaderOptions[];
@@ -72,6 +72,8 @@ const RowActionComponent = ({
     return rowData ?? {};
   }, [data, pageRowIndex]);
 
+  const { openPanels } = useExpandableFlyoutContext();
+
   const dispatch = useDispatch();
   const isSecurityFlyoutEnabled = useIsExperimentalFeatureEnabled('securityFlyoutEnabled');
 
@@ -100,11 +102,7 @@ const RowActionComponent = ({
     };
 
     if (isSecurityFlyoutEnabled) {
-      dispatch(
-        openSecurityFlyout({
-          scope: 'global',
-        })
-      );
+      openPanels({});
     } else {
       dispatch(
         dataTableActions.toggleDetailPanel({
@@ -114,7 +112,7 @@ const RowActionComponent = ({
         })
       );
     }
-  }, [dispatch, eventId, indexName, isSecurityFlyoutEnabled, tabType, tableId]);
+  }, [dispatch, eventId, indexName, isSecurityFlyoutEnabled, openPanels, tabType, tableId]);
 
   const Action = controlColumn.rowCellRender;
 

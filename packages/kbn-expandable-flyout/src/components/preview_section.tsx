@@ -1,33 +1,33 @@
 /*
  * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
  * or more contributor license agreements. Licensed under the Elastic License
- * 2.0; you may not use this file except in compliance with the Elastic License
- * 2.0.
+ * 2.0 and the Server Side Public License, v 1; you may not use this file except
+ * in compliance with, at your election, the Elastic License 2.0 or the Server
+ * Side Public License, v 1.
  */
 
 import { EuiButtonEmpty, EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui';
-import React, { useCallback } from 'react';
-import { css } from '@emotion/react/dist/emotion-react.cjs';
-import { useDispatch } from 'react-redux';
-import {
-  previousSecurityFlyoutPreviewPanel,
-  closeSecurityFlyoutPreviewPanel,
-} from '../../store/flyout/reducers';
+import React from 'react';
+import { css } from '@emotion/react';
+import { useExpandableFlyoutContext } from '../..';
 import { BACK_BUTTON } from './translations';
 
-export interface PreviewSectionProps {
+interface PreviewSectionProps {
   /**
    * Component to be rendered
    */
   component: React.ReactElement;
   /**
-   * Show/hide the back button in the header
+   * Width used when rendering the panel
+   */
+  width: number | undefined;
+  /**
+   * Scope
    */
   showBackButton: boolean;
   /**
    * Width used when rendering the panel
    */
-  width: number | undefined;
 }
 
 export const PreviewSection: React.FC<PreviewSectionProps> = ({
@@ -35,21 +35,13 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
   showBackButton,
   width,
 }: PreviewSectionProps) => {
-  const dispatch = useDispatch();
-  const closePreviewPanel = useCallback(
-    () => dispatch(closeSecurityFlyoutPreviewPanel({ scope: '' })), // TODO figure out how to retrieve the scope
-    [dispatch]
-  );
-  const previousPreviewPanel = useCallback(
-    () => dispatch(previousSecurityFlyoutPreviewPanel({ scope: '' })), // TODO figure out how to retrieve the scope
-    [dispatch]
-  );
+  const { closePreviewPanel, previousPreviewPanel } = useExpandableFlyoutContext();
 
   const previewWith: string = width ? `${width}px` : '0px';
 
   const closeButton = (
     <EuiFlexItem grow={false}>
-      <EuiButtonIcon iconType="cross" onClick={closePreviewPanel} />
+      <EuiButtonIcon iconType="cross" onClick={() => closePreviewPanel()} />
     </EuiFlexItem>
   );
   const header = showBackButton ? (
@@ -59,7 +51,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
           size="xs"
           iconType="arrowLeft"
           iconSide="left"
-          onClick={previousPreviewPanel}
+          onClick={() => previousPreviewPanel()}
         >
           {BACK_BUTTON}
         </EuiButtonEmpty>
