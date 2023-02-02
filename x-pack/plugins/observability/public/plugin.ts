@@ -233,6 +233,7 @@ export class Plugin
         'logs',
         'metrics',
         'apm',
+        'slo',
         'performance',
         'trace',
         'agent',
@@ -287,7 +288,7 @@ export class Plugin
           // See https://github.com/elastic/kibana/issues/103325.
           const otherLinks: NavigationEntry[] = deepLinks
             .filter((link) => link.navLinkStatus === AppNavLinkStatus.visible)
-            .filter((link) => (link.id === 'slos' ? config.unsafe.slo.enabled : link))
+            .filter((link) => (link.id === 'slos' ? config.unsafe.slo.enabled : link)) // might not be useful anymore
             .map((link) => ({
               app: observabilityAppId,
               label: link.title,
