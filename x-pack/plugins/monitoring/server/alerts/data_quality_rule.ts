@@ -51,9 +51,10 @@ async function fetchDataQuality(
   maxBucketSize: number,
   filterQuery: string | undefined
 ): Promise<AlertDataQualityStats[]> {
+  // This requires remote clusters to be configured
+  // If remote clusters are configured, we should use them. Here we only have a local one.
+  const { cluster_uuid: clusterUuid } = await esClient.cluster.state();
   const { indices = {} } = await esClient.indices.stats();
-
-  const cluster = clusters[0];
 
   const checkResults = await runDataQualityCheck(
     esClient,
@@ -66,7 +67,7 @@ async function fetchDataQuality(
     return {
       indexName,
       unallowedValues: fieldCheckSummary.length,
-      clusterUuid: cluster.clusterUuid,
+      clusterUuid,
     };
   });
 
